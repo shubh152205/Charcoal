@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Tab</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Background Wallpaper -->
+  <div id="wallpaper-bg"></div>
+  <video id="wallpaper-video" autoplay loop muted playsinline style="display:none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -2; pointer-events: none;"></video>
+
+  <!-- Center Clock Widget (Mue-inspired) -->
+  <div id="clock-widget">
+    <div class="clock-greeting" id="clock-greeting">Good Afternoon</div>
+    <div class="clock-time" id="clock-time">12:30</div>
+    <div class="clock-date" id="clock-date">29 March 2026</div>
+    <div class="clock-weather" id="clock-weather"></div>
+  </div>
+
+  <!-- Pinned Sites (below clock) -->
+  <div id="pinned-sites">
+    <!-- Rendered dynamically by JS -->
+  </div>
+
+
+
+  <!-- Quote Widget (bottom center) -->
+  <div id="quote-widget">
+    <div class="quote-text" id="quote-text"></div>
+    <div class="quote-author" id="quote-author"></div>
+  </div>
+
+  <!-- Recently Closed Tabs Bar (bottom) -->
+  <div id="recent-tabs-bar">
+    <div class="recent-tabs-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+      Recently Closed Tabs
+    </div>
+    <div id="recent-tabs-list" class="recent-tabs-list">
+      <!-- Rendered dynamically by JS -->
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div id="search-overlay" class="hidden">
+    <div id="search-container">
+      <svg class="search-icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Search here" autocomplete="off">
+      <button id="search-close" class="search-close-btn" title="Close search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="M6 6 18 18"/></svg>
+      </button>
+    </div>
+    <div id="search-results"></div>
+  </div>
+
+  <!-- Page Tabs -->
+  <div id="page-tabs">
+    <button id="page-nav-left" class="page-nav-btn" title="Scroll left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div id="tabs-list"></div>
+    <button id="add-page-btn" class="add-page-btn" title="Add new page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+    </button>
+  </div>
+
+  <!-- Boards Container -->
+  <div id="boards-container"></div>
+
+  <!-- Floating Sidebar Toolbar -->
+  <div id="floating-toolbar">
+    <button id="btn-search" class="toolbar-btn" title="Search bookmarks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+    <button id="btn-import-export" class="toolbar-btn" title="Import / Export">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <button id="btn-incognito" class="toolbar-btn" title="Incognito mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6 2 6s4.48 4 10 4 10-4 10-4-4.48-4-10-4z"/><circle cx="12" cy="14" r="4"/><path d="M4 14h3"/><path d="M17 14h3"/></svg>
+    </button>
+    <button id="btn-multiselect" class="toolbar-btn" title="Multi-select mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </button>
+    <button id="btn-trash" class="toolbar-btn" title="Trash">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    </button>
+    <button id="btn-privacy" class="toolbar-btn" title="Privacy blur">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
+    <button id="btn-settings" class="toolbar-btn" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </div>
+
+  <!-- Style Button (bottom-left) -->
+  <button id="btn-style" class="style-btn" title="Change style & wallpaper">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+  </button>
+
+  <!-- Style Panel -->
+  <div id="style-panel" class="hidden">
+    <div class="style-panel-inner">
+      <h3 class="style-panel-title">Style</h3>
+      <div class="theme-toggle">
+        <button id="theme-dark" class="theme-btn">Dark</button>
+        <button id="theme-light" class="theme-btn active">Light</button>
+      </div>
+
+      <h4 class="wallpaper-section-title" id="wallpaper-section-label">LIGHT WALLPAPERS</h4>
+      <div id="wallpaper-grid" class="wallpaper-grid">
+        <!-- Wallpapers populated by JS -->
+      </div>
+
+      <!-- Upload Section -->
+      <div class="upload-section">
+        <label for="wallpaper-upload" class="upload-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Wallpaper
+        </label>
+        <input type="file" id="wallpaper-upload" accept="image/*" class="hidden-input">
+      </div>
+
+      <!-- Custom uploaded wallpapers -->
+      <div id="custom-wallpapers-section" class="hidden">
+        <h4 class="wallpaper-section-title">MY WALLPAPERS</h4>
+        <div id="custom-wallpaper-grid" class="wallpaper-grid"></div>
+      </div>
+
+      <label for="video-upload" class="explore-btn" style="text-align: center; display: block; cursor: pointer;">Upload Video / GIF Wallpaper</label>
+      <input type="file" id="video-upload" accept="image/gif,video/mp4,video/webm" class="hidden-input">
+    </div>
+  </div>
+
+  <!-- Add Page Modal -->
+  <div id="add-page-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Add New Page</h2>
+      <label class="modal-label">Page Name <span class="required">*</span></label>
+      <input type="text" id="new-page-name" class="modal-input" placeholder="Enter page name...">
+      <div class="modal-actions">
+        <button id="cancel-add-page" class="modal-btn modal-btn-cancel">Cancel</button>
+        <button id="confirm-add-page" class="modal-btn modal-btn-confirm">Create Page</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Board Modal -->
+  <div id="add-board-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Add New Board</h2>
+      <label class="modal-label">Board Name <span class="required">*</span></label>
+      <input type="text" id="new-board-name" class="modal-input" placeholder="Enter board name...">
+      <div class="modal-actions">
+        <button id="cancel-add-board" class="modal-btn modal-btn-cancel">Cancel</button>
+        <button id="confirm-add-board" class="modal-btn modal-btn-confirm">Create Board</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Bookmark Modal -->
+  <div id="add-bookmark-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Add Bookmark</h2>
+      <label class="modal-label">Title <span class="required">*</span></label>
+      <input type="text" id="new-bookmark-title" class="modal-input" placeholder="Enter title...">
+      <label class="modal-label">URL <span class="required">*</span></label>
+      <input type="url" id="new-bookmark-url" class="modal-input" placeholder="https://example.com">
+      <label class="modal-label">Description</label>
+      <input type="text" id="new-bookmark-desc" class="modal-input" placeholder="Optional description...">
+      <div class="modal-actions">
+        <button id="cancel-add-bookmark" class="modal-btn modal-btn-cancel">Cancel</button>
+        <button id="confirm-add-bookmark" class="modal-btn modal-btn-confirm">Add Bookmark</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Bookmark Modal -->
+  <div id="edit-bookmark-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Edit Bookmark</h2>
+      <label class="modal-label">Title <span class="required">*</span></label>
+      <input type="text" id="edit-bookmark-title" class="modal-input" placeholder="Enter title...">
+      <label class="modal-label">URL <span class="required">*</span></label>
+      <input type="url" id="edit-bookmark-url" class="modal-input" placeholder="https://example.com">
+      <label class="modal-label">Description</label>
+      <input type="text" id="edit-bookmark-desc" class="modal-input" placeholder="Optional description...">
+      <div class="modal-actions">
+        <button id="cancel-edit-bookmark" class="modal-btn modal-btn-cancel">Cancel</button>
+        <button id="confirm-edit-bookmark" class="modal-btn modal-btn-confirm">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Board Modal -->
+  <div id="edit-board-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Edit Board</h2>
+      <label class="modal-label">Board Name <span class="required">*</span></label>
+      <input type="text" id="edit-board-name" class="modal-input" placeholder="Enter board name...">
+      <div class="modal-actions">
+        <button id="cancel-edit-board" class="modal-btn modal-btn-cancel">Cancel</button>
+        <button id="confirm-edit-board" class="modal-btn modal-btn-confirm">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal (Mue-inspired sidebar nav) -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-content settings-content-enhanced">
+      <div class="settings-header">
+        <h2 class="modal-title">Settings</h2>
+        <button id="close-settings" class="close-btn" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="M6 6 18 18"/></svg>
+        </button>
+      </div>
+
+      <div class="settings-layout">
+        <!-- Sidebar Nav -->
+        <div class="settings-sidebar">
+          <button class="settings-nav-item active" data-panel="general">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            General
+          </button>
+          <button class="settings-nav-item" data-panel="greeting">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11v-1a5 5 0 0 1 10 0v1"/><path d="M2 17a5 5 0 0 0 10 0"/><path d="M12 17a5 5 0 0 0 10 0"/></svg>
+            Greeting
+          </button>
+          <button class="settings-nav-item" data-panel="time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Time
+          </button>
+          <button class="settings-nav-item" data-panel="date">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+            Date
+          </button>
+          <button class="settings-nav-item" data-panel="quote">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H5C3.5 3 3 3.5 3 5v4c0 1 .5 2 2 2h2c0 4-3 6-6 6z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-3c-1.5 0-2 .5-2 2v4c0 1 .5 2 2 2h2c0 4-3 6-6 6z"/></svg>
+            Quote
+          </button>
+          <button class="settings-nav-item" data-panel="weather">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+            Weather
+          </button>
+          <button class="settings-nav-item" data-panel="appearance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+            Appearance
+          </button>
+          <button class="settings-nav-item" data-panel="widgets">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Widgets
+          </button>
+          <button class="settings-nav-item" data-panel="advanced">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>
+            Advanced
+          </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="settings-main">
+          <!-- General Panel -->
+          <div class="settings-panel active" data-panel="general">
+            <h3 class="settings-main-title">General</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Open in new tab</span><div class="settings-row-desc">Open bookmarks in a new browser tab</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-new-tab" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Compact mode</span><div class="settings-row-desc">Reduce spacing between items</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-compact"><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Shorten titles</span><div class="settings-row-desc">Truncate long bookmark names</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-shorten" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Hide extra bookmarks</span><div class="settings-row-desc">Show only first 5 items per board</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-hide-extra"><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show descriptions</span><div class="settings-row-desc">Display descriptions under bookmarks</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-descriptions" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Confirm before delete</span><div class="settings-row-desc">Show confirmation dialog for deletions</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-confirm-delete" checked><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- Greeting Panel -->
+          <div class="settings-panel" data-panel="greeting">
+            <h3 class="settings-main-title">Greeting</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show greeting</span><div class="settings-row-desc">Display greeting on the dashboard</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-greeting" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Custom name</span><div class="settings-row-desc">Personalize greeting (e.g. "Good Morning, John")</div></div>
+              <div class="settings-row-control"><input type="text" id="setting-greeting-name" class="modal-input" placeholder="Your name" style="width:160px"></div>
+            </div>
+          </div>
+
+          <!-- Time Panel -->
+          <div class="settings-panel" data-panel="time">
+            <h3 class="settings-main-title">Time</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show time</span><div class="settings-row-desc">Display clock on dashboard</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-time" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Time format</span><div class="settings-row-desc">Choose 12-hour or 24-hour clock</div></div>
+              <div class="settings-row-control">
+                <select id="setting-time-format" class="modal-select">
+                  <option value="12">12-hour</option>
+                  <option value="24" selected>24-hour</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show seconds</span><div class="settings-row-desc">Display seconds in the clock</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-seconds"><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- Date Panel -->
+          <div class="settings-panel" data-panel="date">
+            <h3 class="settings-main-title">Date</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show date</span><div class="settings-row-desc">Display current date on dashboard</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-date" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Date format</span><div class="settings-row-desc">Choose how the date is displayed</div></div>
+              <div class="settings-row-control">
+                <select id="setting-date-format" class="modal-select">
+                  <option value="long" selected>29 March 2026</option>
+                  <option value="short">29/03/2026</option>
+                  <option value="us">03/29/2026</option>
+                  <option value="iso">2026-03-29</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show day of week</span><div class="settings-row-desc">Include the day name (e.g. Sunday)</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-day" checked><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- Quote Panel -->
+          <div class="settings-panel" data-panel="quote">
+            <h3 class="settings-main-title">Quote</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show quote</span><div class="settings-row-desc">Display an inspirational quote</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-quote" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Custom quote</span><div class="settings-row-desc">Set your own message (leave empty for random)</div></div>
+              <div class="settings-row-control"><input type="text" id="setting-custom-quote" class="modal-input" placeholder="Your quote" style="width:200px"></div>
+            </div>
+          </div>
+
+          <!-- Weather Panel -->
+          <div class="settings-panel" data-panel="weather">
+            <h3 class="settings-main-title">Weather</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Show weather</span><div class="settings-row-desc">Display weather info on dashboard</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-weather"><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Location</span><div class="settings-row-desc">City name for weather data</div></div>
+              <div class="settings-row-control"><input type="text" id="setting-weather-location" class="modal-input" placeholder="London" style="width:160px"></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Temperature unit</span><div class="settings-row-desc">Choose Celsius or Fahrenheit</div></div>
+              <div class="settings-row-control">
+                <select id="setting-weather-unit" class="modal-select">
+                  <option value="C" selected>°C (Celsius)</option>
+                  <option value="F">°F (Fahrenheit)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appearance Panel -->
+          <div class="settings-panel" data-panel="appearance">
+            <h3 class="settings-main-title">Appearance</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Theme</span><div class="settings-row-desc">Choose light, dark, or system theme</div></div>
+              <div class="settings-row-control">
+                <select id="setting-theme-select" class="modal-select">
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                  <option value="auto">Auto (System)</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Background blur</span><div class="settings-row-desc">Adjust wallpaper blur intensity</div></div>
+              <div class="settings-row-control">
+                <div class="blur-slider-container">
+                  <input type="range" id="setting-blur-intensity" class="blur-slider" min="0" max="30" step="1" value="0">
+                  <span id="blur-value-label" class="blur-slider-value">0px</span>
+                </div>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Glass Opacity</span><div class="settings-row-desc">Adjust overall glass intensity</div></div>
+              <div class="settings-row-control">
+                <div class="blur-slider-container">
+                  <input type="range" id="setting-glass-opacity" class="blur-slider" min="0" max="100" step="5" value="100">
+                  <span id="glass-opacity-value-label" class="blur-slider-value">100%</span>
+                </div>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Fill Transparency</span><div class="settings-row-desc">Adjust transparency for boards and icons</div></div>
+              <div class="settings-row-control">
+                <div class="blur-slider-container">
+                  <input type="range" id="setting-glass-fill-opacity" class="blur-slider" min="0" max="100" step="5" value="55">
+                  <span id="glass-fill-opacity-value-label" class="blur-slider-value">55%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Widgets Panel -->
+          <div class="settings-panel" data-panel="widgets">
+            <h3 class="settings-main-title">Widgets</h3>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Pinned Sites</span><div class="settings-row-desc">Show pinned website shortcuts below the clock</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-pinned" checked><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Manage Pinned Sites</span><div class="settings-row-desc">Add or remove pinned website shortcuts</div></div>
+              <div class="settings-row-control"><button id="btn-manage-pinned" class="settings-action-btn" style="padding:6px 14px;font-size:12px;">Manage</button></div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Recently Closed Tabs</span><div class="settings-row-desc">Show recently closed tabs at the bottom</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-show-recent-tabs" checked><span class="toggle-slider"></span></label></div>
+            </div>
+
+            <div class="settings-row">
+              <div><span class="settings-row-label">Liquid Glass Effect</span><div class="settings-row-desc">Apply frosted glass effect to icons and buttons</div></div>
+              <div class="settings-row-control"><label class="toggle-switch"><input type="checkbox" id="setting-liquid-glass" checked><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- Advanced Panel -->
+          <div class="settings-panel" data-panel="advanced">
+            <h3 class="settings-main-title">Advanced</h3>
+            <div class="settings-section" style="margin-bottom:16px">
+              <h3 class="settings-section-title">Data Management</h3>
+              <div class="settings-data-actions">
+                <button id="settings-export" class="settings-action-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export Data
+                </button>
+                <button id="settings-import" class="settings-action-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Import Data
+                </button>
+                <input type="file" id="import-file" accept=".json" class="hidden-input">
+                <button id="settings-reset" class="settings-action-btn settings-action-danger">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                  Reset All Data
+                </button>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div><span class="settings-row-label">Tab name</span><div class="settings-row-desc">Custom name for the browser tab</div></div>
+              <div class="settings-row-control"><input type="text" id="setting-tab-name" class="modal-input" placeholder="New Tab" style="width:160px" value="Charcoal"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trash Modal -->
+  <div id="trash-modal" class="modal-overlay hidden">
+    <div class="modal-content trash-content">
+      <div class="settings-header">
+        <h2 class="modal-title">Trash</h2>
+        <button id="close-trash" class="close-btn" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="M6 6 18 18"/></svg>
+        </button>
+      </div>
+      <div id="trash-items" class="trash-items">
+        <p class="trash-empty">Trash is empty</p>
+      </div>
+      <div class="trash-actions">
+        <button id="empty-trash" class="modal-btn modal-btn-cancel">Empty Trash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import/Export Modal -->
+  <div id="import-export-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="settings-header">
+        <h2 class="modal-title">Import / Export</h2>
+        <button id="close-import-export" class="close-btn" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="M6 6 18 18"/></svg>
+        </button>
+      </div>
+      <div class="import-export-actions">
+        <button id="ie-export" class="ie-action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Export Bookmarks</span>
+          <span class="ie-desc">Download your data as JSON</span>
+        </button>
+        <button id="ie-import" class="ie-action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Import Bookmarks</span>
+          <span class="ie-desc">Load data from a JSON file</span>
+        </button>
+        <input type="file" id="ie-import-file" accept=".json" class="hidden-input">
+        <button id="ie-import-chrome" class="ie-action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+          <span>Import from Chrome</span>
+          <span class="ie-desc">Import your Chrome bookmarks</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden">
+    <span id="toast-message"></span>
+  </div>
+
+  <!-- Custom Confirm Dialog (replaces browser confirm() which is blocked in extensions) -->
+  <div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-content confirm-content">
+      <h2 class="modal-title" id="confirm-title">Are you sure?</h2>
+      <p class="confirm-message" id="confirm-message">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="confirm-cancel" class="modal-btn modal-btn-cancel">Cancel</button>
+        <button id="confirm-ok" class="modal-btn modal-btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Menu -->
+  <div id="context-menu" class="context-menu hidden">
+    <button class="ctx-item" data-action="edit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit
+    </button>
+    <button class="ctx-item" data-action="delete">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      Delete
+    </button>
+  </div>
+
+  <!-- Manage Pinned Sites Modal -->
+  <div id="manage-pinned-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="width:500px">
+      <div class="settings-header">
+        <h2 class="modal-title">Manage Pinned Sites</h2>
+        <button id="close-manage-pinned" class="close-btn" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="M6 6 18 18"/></svg>
+        </button>
+      </div>
+      <div id="pinned-sites-list" class="pinned-sites-manage-list">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="pinned-sites-add-form">
+        <input type="text" id="pinned-site-title" class="modal-input" placeholder="Title (e.g. YouTube)" style="flex:1">
+        <input type="url" id="pinned-site-url" class="modal-input" placeholder="https://youtube.com" style="flex:1.5">
+        <button id="add-pinned-site" class="modal-btn modal-btn-confirm" style="padding:10px 16px;">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="ui.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

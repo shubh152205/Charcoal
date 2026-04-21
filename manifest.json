@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Charcoal - Smart Bookmark Manager",
+  "version": "1.0.0",
+  "description": "A beautiful, customizable new tab bookmark dashboard with wallpapers, dark/light themes, and drag & drop organization.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "bookmarks",
+    "tabs",
+    "sessions"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
+  
