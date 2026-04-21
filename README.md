@@ -81,8 +81,16 @@ The Javascript logic is separated into three distinct files to maintain clean ar
 
 ## 🚀 How to Run Locally (Developer Mode)
 
+### Step 1: Clone the Repository
+If you're pulling from GitHub, open your terminal and run:
+```bash
+git clone https://github.com/shubh152205/Charcoal.git
+cd Charcoal
+```
+
+### Step 2: Install the Extension
 1. Open your Chromium-based browser (Chrome, Edge, Brave).
 2. Navigate to `chrome://extensions/` (or equivalent).
 3. Enable **Developer mode** (usually a toggle in the top-right corner).
-4. Click **Load unpacked** and select the `new_tab` folder containing these files.
+4. Click **Load unpacked** and select the folder you just cloned (or the `new_tab` folder containing these files).
 5. Open a new tab to see your Charcoal dashboard in action.
